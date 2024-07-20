@@ -1,0 +1,191 @@
+<div class="container text-white mainJod" >
+    <div class="display-4">Task Management Application</div>
+    <div class="text-center  font-italic display-8" >
+      Coding Ninjas <img src="../../assets/logo.png" class="rounded" alt="..." width="34" height="40">
+    </div>
+    <div class="display-10">Smile (2110992165)</div>
+     
+    <div class="container m-3 d-flex flex-wrap justify-content-center justify-content-md-start" >
+      
+      <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#taskModal"  >Add Task</button>
+      <button type="button" class="btn btn-success m-2" (click)="exportTasks()">Export Tasks to CSV</button>
+      <button type="button" class="btn btn-info m-2" (click)="exportHistory()">History Log</button>
+   
+    </div>
+  
+     <!-- Buttons for sorting tasks -->
+     <div class="mb-3">
+      <button type="button" class="btn btn-secondary mr-2" (click)="sortByDate()">Sort by Date</button>
+      <button type="button" class="btn btn-secondary mr-2" (click)="sortByPriority()">Sort by Priority</button>
+      <button type="button" class="btn btn-secondary" (click)="sortByStatus()">Sort by Status</button>
+    </div>
+  
+    <!-- Modal for adding task-->
+    <div class="modal fade text-dark" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true" >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="taskModalLabel">Add Task</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="addTask()">
+              <div class="form-group">
+                <label for="taskName">Task Name:</label>
+                <input type="text" class="form-control" id="taskName" [(ngModel)]="newTask.name" 
+                 placeholder="Enter task name" name="taskName" required >
+              </div>
+              <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description"  [(ngModel)]="newTask.description" name="description" rows="3" placeholder="Enter task description"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="dueDate">Due Date:</label>
+                <input type="date" class="form-control" id="dueDate" name="dueDate" [(ngModel)]="newTask.dueDate">
+              </div>
+              <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select class="form-control" id="priority" name="priority" [(ngModel)]="newTask.priority">
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="status">Status:</label>
+                <select class="form-control" id="status" name="status" [(ngModel)]="newTask.status">
+                  <option>To Do</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    
+    <!-- edit task modal -->
+   
+    <div class="modal fade text-dark" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="updateTask()">
+              <div class="form-group">
+                <label for="editTaskName">Task Name:</label>
+                <input type="text" class="form-control" name="editTaskName"  id="editTaskName" [(ngModel)]="selectedTask.name"  placeholder="Enter task name" required>
+              </div>
+              <div class="form-group">
+                <label for="editDescription">Description:</label>
+                <textarea class="form-control" id="editDescription" name="editDescription" [(ngModel)]="selectedTask.description" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="editDueDate">Due Date:</label>
+                <input type="date" class="form-control" name="editDueDate" id="editDueDate" [(ngModel)]="selectedTask.dueDate">
+              </div>
+              <div class="form-group">
+                <label for="editPriority">Priority:</label>
+                <select class="form-control" id="editPriority" name="editPriority" [(ngModel)]="selectedTask.priority">
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="editStatus">Status:</label>
+                <select class="form-control" id="editStatus" name="editStatus" [(ngModel)]="selectedTask.status">
+                  <option>To Do</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Update Task</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+        <hr>
+  
+        <table class="table table-dark table-hover table-responsive-lg">
+          <thead>
+            <tr >
+              <th scope="col">Task Title</th>
+              <th scope="col">Description </th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Priority</th> 
+              <!-- low medium high -->
+              <th scope="col">Status</th>
+              <!-- todo inprogress completed -->
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of tasks; let i = index">
+              <th scope="row">{{task.name}}</th>
+              <td>{{task.description}}</td>
+              <td>{{task.dueDate | date: 'MMM dd, yyyy'}}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  {{task.priority}}
+                </div>
+  
+                </td>
+              <td>
+                  <div class="btn-group" role="group">
+                      {{task.status}}
+                  </div>
+              </td>
+              <td><button class="btn btn-primary" (click)="editTask(task,i)" data-toggle="modal" data-target="#editTaskModal">Edit</button></td>
+              <td><button  name="deleteTask" aria-label="deleteTask" class="btn btn-danger" (click)="deleteTask(task)">Delete</button></td>
+            </tr>
+           
+            
+          </tbody>
+        </table>
+  
+  
+        <div class="container my-5" id="historyModal">
+          History Log
+          <div class="modal-body">
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Task</th>
+                <th scope="col">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of taskHistory">
+                <td>{{ log.action }}</td>
+                <td>{{ log.taskName }}</td>
+                <td>{{ log.time | date: 'MMM dd, yyyy, HH:mm:ss' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+        
+  
+  </div>
+  
+  
+  
+  
+  
+  
+  
